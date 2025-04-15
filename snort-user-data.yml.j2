@@ -1,0 +1,40 @@
+#cloud-config
+hostname: {{ vm_name }}
+users:
+  - name: {{ cloud_init_user }}
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    home: /home/{{ cloud_init_user }}
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: "{{ cloud_init_password | password_hash('sha512') }}"
+ssh_pwauth: true
+disable_root: false
+chpasswd:
+  expire: false
+
+package_update: true
+packages:
+  - snort
+
+bootcmd:
+  - echo 'ttyS0' > /etc/securetty
+
+write_files:
+  - path: /etc/netplan/01-netcfg.yaml
+    content: |
+      network:
+        version: 2
+        ethernets:
+          ens18:
+            dhcp4: false
+            addresses:
+              - {{ vm_ip }}/24
+            gateway4: {{ vm_gateway }}
+            nameservers:
+              addresses: [8.8.8.8, 1.1.1.1]
+
+runcmd:
+  - systemctl enable snort
+  - netplan apply
+  - systemctl enable serial-getty@ttyS0.service
