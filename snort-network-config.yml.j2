@@ -1,0 +1,9 @@
+version: 2
+ethernets:
+  {{ vm_network_interface }}:
+    dhcp4: false
+    addresses:
+      - {{ vm_ip }}/24
+    gateway4: {{ vm_gateway }}
+    nameservers:
+      addresses: [8.8.8.8, 1.1.1.1]
