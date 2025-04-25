@@ -514,4 +514,33 @@ ethernets:
 
 Antes de ejecutar el playbook, debemos subir la imagen que tendrá la máquina que desplegaremos. Esto lo haremos mediante la interfaz gráfica.
 
+Para ello, nos direigimos a la interfaz proxmox, seleccionamos el nodo, seleccionamos el almacenamiento, vamos a ISOS y cargamos la imagen previamente descargada:
+![image](https://github.com/user-attachments/assets/c09288f3-0802-4f33-a65b-fd31d417c981)
+
+### 9. Ejecutar playbook y confirmar despliegue:
+
+Una vez preparados todos los archivos y la imagen, tendríamos todo listo para ejecutar el playbook y conseguir el despliegue de la primera máquina. Para ello, ejecutamos el comando siguiente:
+```bash
+ansible-playbook -i inventory.ini playbooks/snort.yml -u root --ask-pass
+```
+Con este comando, ejecutaremos el playbook que orquesta el despliegue como root.
+
+### 10. Confirmación de la máquina:
+
+Una vez terminado el despliegue, nos dirigiremos a la interfaz Proxmox para comprobar que todo ha sido creado correctamente:
+- **Su configuración hardware**
+![image](https://github.com/user-attachments/assets/9445eba3-eec3-4592-a47d-42cb9934b0e5)
+
+- **Consola de la máquina**
+  ![image](https://github.com/user-attachments/assets/b2517beb-1b7f-43df-aff6-44746f557d62)
+
+- **Su IP y conectividad con Proxmox**
+  ![image](https://github.com/user-attachments/assets/8f9eccab-bcd2-4f48-9c19-69f0a726362a)
+  ![image](https://github.com/user-attachments/assets/421b1891-0a95-4d82-a400-42b0548d226b)
+
+- **Comprobar si Snort está instalado**
+  ![image](https://github.com/user-attachments/assets/0c7cd2ed-6745-4c6f-a768-c8cad462f80c)
+
+
+  
 
