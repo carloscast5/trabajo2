@@ -431,3 +431,87 @@ Una vez creado el inventario, procederemos a crear el Playbook para el despliegu
         timeout: 300
       delegate_to: localhost
 ```
+### 7. Configuración Cloud-Init:
+
+Debemos crear y configurar una carpeta cloud-init para la máquina. ¿Por qué? Configurar Cloud-Init en esta máquina virtual es necesario porque Cloud-Init permite automatizar la configuración inicial del sistema operativo cuando la máquina se inicia por primera vez. En este caso, la configuración de Cloud-Init hace lo siguiente:
+
+- Crea el usuario especificado (en este caso, "carlos") y configura su contraseña automáticamente.
+
+- Configura la red de la máquina, asegurando que tenga una dirección IP estática y la puerta de enlace correcta.
+
+- Realiza configuraciones adicionales como la instalación de paquetes o ajustes específicos del sistema, que son definidos en los archivos user-data y network-config.
+
+Para ello, crearemos 2 archivos, uno configurará la información del usuario de la máquina y el otro configurará la red de la misma:
+- **snort-user-data.yml.j2**
+```bash
+#cloud-config
+hostname: {{ vm_name }}
+users:
+  - name: {{ cloud_init_user }}
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    home: /home/{{ cloud_init_user }}
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: "{{ cloud_init_password | password_hash('sha512') }}"
+ssh_pwauth: true
+disable_root: false
+chpasswd:
+  expire: false
+
+package_update: true
+packages:
+  - snort
+
+bootcmd:
+  - echo 'ttyS0' > /etc/securetty
+
+runcmd:
+  - netplan apply
+  - systemctl enable snort
+```
+
+- **snort-network-config.yml.j2**
+```bash
+#cloud-config
+hostname: {{ vm_name }}
+users:
+  - name: {{ cloud_init_user }}
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    home: /home/{{ cloud_init_user }}
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: "{{ cloud_init_password | password_hash('sha512') }}"
+ssh_pwauth: true
+disable_root: false
+chpasswd:
+  expire: false
+
+package_update: true
+packages:
+  - snort
+
+bootcmd:
+  - echo 'ttyS0' > /etc/securetty
+
+runcmd:
+  - netplan apply
+  - systemctl enable snort
+
+carlos@ansible:~/proyecto2/cloud_init$ cat snort-network-config.yml.j2
+version: 2
+ethernets:
+  {{ vm_network_interface }}:
+    dhcp4: false
+    addresses:
+      - {{ vm_ip }}/24
+    gateway4: {{ vm_gateway }}
+    nameservers:
+      addresses: [8.8.8.8, 1.1.1.1]
+```
+### 8. Subir imagen a proxmox:
+
+Antes de ejecutar el playbook, debemos subir la imagen que tendrá la máquina que desplegaremos. Esto lo haremos mediante la interfaz gráfica.
+
+
