@@ -305,3 +305,129 @@ snort ansible_host=192.168.100.10 ansible_user=carlos ansible_password=carlos an
 ```
 -**El inventario quedaría tal que así, guardado en un archivo .ini**
 ![image](https://github.com/user-attachments/assets/63410708-1d6f-45ab-bfcf-599d112bc9ff)
+
+### 6. Creación de Playbook:
+
+Una vez creado el inventario, procederemos a crear el Playbook para el despliegue de la máquina. Un playbook en Ansible es un archivo donde defines una serie de tareas o acciones que quieres que Ansible ejecute en tus máquinas. Es como una receta o un conjunto de instrucciones que le dices a Ansible para automatizar tareas, como instalar programas, configurar servicios, o hacer cambios en los sistemas. Cada tarea en un playbook describe qué hacer, en qué máquinas hacerlo y cómo hacerlo.
+
+*Este playbook despliega una máquina virtual Ubuntu en Proxmox con Cloud-Init y Snort. Básicamente:*
+
+- Verifica si la imagen de Ubuntu ya está disponible.
+
+- Crea una VM vacía en Proxmox con la configuración especificada (memoria, CPU, red, etc.).
+
+- Importa la imagen de Ubuntu si no está presente.
+
+- Adjunta el disco importado a la VM.
+
+- Configura el arranque desde el disco.
+
+- Deshabilita KVM en la VM (opcional, para configuración especial).
+
+- Crea una unidad Cloud-Init para configurar la VM.
+
+- Genera los archivos de configuración de Cloud-Init (user-data y network-config).
+
+- Adjunta estos archivos de configuración a la VM.
+
+- Inicia la VM y espera que se inicie correctamente.
+
+**Y así quedaría mi playbook el cual logra desplegar la máquina correctamente, guardado en un .yml**
+```bash
+ ---
+- name: Desplegar VM Ubuntu Cloud-Init con Snort
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    vm_id: 105
+    vm_name: "ubuntu-snort"
+    vm_memory: 4096
+    vm_cores: 2
+    vm_ip: "192.168.100.10"
+    vm_gateway: "192.168.100.3"
+    vm_network_interface: "ens18"
+    cloud_init_user: "carlos"
+    cloud_init_password: "carlos"
+    image_path: "/var/lib/vz/template/iso/jammy-server-cloudimg-amd64.img"
+    storage: "local-lvm"
+    proxmox_host: "192.168.100.3"
+    proxmox_node: "carlos"
+    snippets_path: "/var/lib/vz/snippets"
+
+  tasks:
+
+    - name: Verificar si la imagen cloud existe
+      stat:
+        path: "{{ image_path }}"
+      register: image_stat
+
+    - name: Crear la VM vacía
+      community.general.proxmox_kvm:
+        api_host: "{{ proxmox_host }}"
+        api_user: "root@pam"
+        api_password: "carlos"
+        vmid: "{{ vm_id }}"
+        node: "{{ proxmox_node }}"
+        name: "{{ vm_name }}"
+        memory: "{{ vm_memory }}"
+        cores: "{{ vm_cores }}"
+        ostype: l26
+        scsihw: virtio-scsi-pci
+        net:
+          net0: "virtio,bridge=vmbr0"
+        ipconfig:
+          ipconfig0: "ip={{ vm_ip }}/24,gw={{ vm_gateway }}"
+        state: present
+      delegate_to: localhost
+
+    - name: Importar el disco a la VM
+      command: qm importdisk {{ vm_id }} {{ image_path }} {{ storage }}
+      when: not image_stat.stat.exists
+      delegate_to: "{{ proxmox_host }}"
+
+    - name: Adjuntar disco importado como scsi0
+      command: qm set {{ vm_id }} --scsihw virtio-scsi-pci --scsi0 {{ storage }}:vm-{{ vm_id }}-disk-0
+      delegate_to: "{{ proxmox_host }}"
+
+    - name: Configurar arranque desde el disco
+      command: qm set {{ vm_id }} --boot order=scsi0
+      delegate_to: "{{ proxmox_host }}"
+
+    - name: Deshabilitar KVM en la VM
+      command: qm set {{ vm_id }} --kvm 0
+      delegate_to: "{{ proxmox_host }}"
+      changed_when: false
+
+    - name: Crear unidad Cloud-Init
+      command: qm set {{ vm_id }} --ide2 {{ storage }}:cloudinit,media=cdrom
+      delegate_to: "{{ proxmox_host }}"
+
+    - name: Generar user-data
+      template:
+        src: ../cloud_init/snort-user-data.yml.j2
+        dest: "{{ snippets_path }}/{{ vm_name }}-user-data.yml"
+      delegate_to: "{{ proxmox_host }}"
+
+    - name: Generar network-config
+      template:
+        src: ../cloud_init/snort-network-config.yml.j2
+        dest: "{{ snippets_path }}/{{ vm_name }}-network-config.yml"
+      delegate_to: "{{ proxmox_host }}"
+
+    - name: Adjuntar configuración Cloud-Init personalizada
+      command: >
+        qm set {{ vm_id }} --cicustom "user=local:snippets/{{ vm_name }}-user-data.yml,network=local:snippets/{{ vm_name }}-network-config.yml"
+      delegate_to: "{{ proxmox_host }}"
+
+    - name: Iniciar la VM
+      community.general.proxmox_kvm:
+        api_host: "{{ proxmox_host }}"
+        api_user: "root@pam"
+        api_password: "carlos"
+        vmid: "{{ vm_id }}"
+        node: "{{ proxmox_node }}"
+        state: started
+        timeout: 300
+      delegate_to: localhost
+```
