@@ -523,7 +523,13 @@ Una vez preparados todos los archivos y la imagen, tendríamos todo listo para e
 ```bash
 ansible-playbook -i inventory.ini playbooks/snort.yml -u root --ask-pass
 ```
-Con este comando, ejecutaremos el playbook que orquesta el despliegue como root.
+Con este comando, ejecutaremos el playbook que orquesta el despliegue como root. Se vería tal que así:
+
+*![image](https://github.com/user-attachments/assets/fff6effc-55e5-4fd3-b3ed-0437bea92311)*
+
+*![image](https://github.com/user-attachments/assets/1c2d976e-df59-4716-ac5e-f1358d3ec7e9)*
+
+**Como se indica, todo está correcto (changed indica que se han aplicado cambios)**
 
 ### 10. Confirmación de la máquina:
 
