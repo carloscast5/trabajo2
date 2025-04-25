@@ -268,3 +268,40 @@ http://192.168.100.3:8006
 
 
 Una vez logueados, ya tendríamos disponible nuestra interfaz de Proxmox, la cual trataremos de utilizar lo menos posible ya que con Ansible, podremos gestionar la mayoría de las operaciones a realizar para el despliegue, aunque sí tendremos que usarla para algunas configuraciones.
+
+### 5. Creación de carpeta de trabajo:
+
+Una vez ya instalado y configurado Proxmox, ya podemos comenzar con la preparación del despliegue de la primera máquina. Para ello, nos dirigimos a la máquina Ansible y creamos una carpeta para el trabajo:
+*![image](https://github.com/user-attachments/assets/a45e3b75-8a5f-4496-baf7-968b8dcccff4)*
+Una vez creada la carpeta, organizaremos los archivos necesarios en 3 partes:
+
+- **Inventario**
+- **Playbooks**
+- **Cloud-init**
+
+![image](https://github.com/user-attachments/assets/ed84593a-228f-484d-be81-93404573ed17)
+
+### 5. Creación de Inventario:
+
+Comenzaremos a crear nuestro inventario. Un inventario en Ansible es simplemente un archivo o una lista que contiene los detalles de los servidores o máquinas a los que Ansible debe conectarse para ejecutar tareas. Este archivo especifica las direcciones IP, nombres de host, o grupos de servidores que quieres gestionar, lo que permite a Ansible saber a dónde enviar las instrucciones. Es como una agenda donde se guardan los contactos (servidores) con los que vas a trabajar. Como de momento solo vamos a desplegar una máquina, este será bastante sencillito, pero se complicará más cuando el despliegue sea más completo.
+
+-**Lo primero** que especificaré en el inventario será el localhost, indicando que la conexión serálocal y que haga uso de python3 para ejecutar comandos. se define tal que así: 
+
+```bash
+[local]
+localhost ansible_connection=local ansible_python_interpreter=/usr/bin/python3
+```
+-**Lo segundo** que especificaré será la máquina proxmox, en la cual si debemos especificar la IP a la que se debe conectar para la ejecución de los comandos. Tambien espefcificaremos el usuario y la contraseña:
+
+```bash
+[proxmox]
+192.168.100.3 ansible_user=root ansible_password=carlos ansible_connection=ssh ansible_python_interpreter=/usr/bin/python3
+```
+-**Y por últimmo (de momento)** especificaremos la máquina snort (es la que vamos a desplegar):
+
+```bash
+[snort]
+snort ansible_host=192.168.100.10 ansible_user=carlos ansible_password=carlos ansible_become=true
+```
+-**El inventario quedaría tal que así, guardado en un archivo .ini**
+![image](https://github.com/user-attachments/assets/63410708-1d6f-45ab-bfcf-599d112bc9ff)
