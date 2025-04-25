@@ -529,17 +529,22 @@ Con este comando, ejecutaremos el playbook que orquesta el despliegue como root.
 
 Una vez terminado el despliegue, nos dirigiremos a la interfaz Proxmox para comprobar que todo ha sido creado correctamente:
 - **Su configuración hardware**
-![image](https://github.com/user-attachments/assets/9445eba3-eec3-4592-a47d-42cb9934b0e5)
+  
+ *![image](https://github.com/user-attachments/assets/9445eba3-eec3-4592-a47d-42cb9934b0e5)*
 
 - **Consola de la máquina**
-  ![image](https://github.com/user-attachments/assets/b2517beb-1b7f-43df-aff6-44746f557d62)
+  
+ *![image](https://github.com/user-attachments/assets/b2517beb-1b7f-43df-aff6-44746f557d62)*
 
 - **Su IP y conectividad con Proxmox**
-  ![image](https://github.com/user-attachments/assets/8f9eccab-bcd2-4f48-9c19-69f0a726362a)
-  ![image](https://github.com/user-attachments/assets/421b1891-0a95-4d82-a400-42b0548d226b)
+  
+  *![image](https://github.com/user-attachments/assets/8f9eccab-bcd2-4f48-9c19-69f0a726362a)*
+  
+  *![image](https://github.com/user-attachments/assets/421b1891-0a95-4d82-a400-42b0548d226b)*
 
 - **Comprobar si Snort está instalado**
-  ![image](https://github.com/user-attachments/assets/0c7cd2ed-6745-4c6f-a768-c8cad462f80c)
+  
+  *![image](https://github.com/user-attachments/assets/0c7cd2ed-6745-4c6f-a768-c8cad462f80c)*
 
 
   
