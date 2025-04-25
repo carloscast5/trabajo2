@@ -201,7 +201,9 @@ Verificamos instalación:
 ```bash
 ansible --version
 ```
-![image](https://github.com/user-attachments/assets/c42078e8-1a9f-4255-90b8-232bce4c8cad)
+
+*![image](https://github.com/user-attachments/assets/c42078e8-1a9f-4255-90b8-232bce4c8cad)*
+
 
 Ahora, instalaremos las dependencias necesarias para que Ansible interactúe con Proxmox:
 
@@ -240,7 +242,8 @@ sudo apt install -y python3-requests python3-proxmoxer
 ```
 
 Aquí tendríamos nuestra máquina Ansible, en la cual realizaremos diferentes playbooks e inventarios para gestionar el despliegue.
-![image](https://github.com/user-attachments/assets/252faf9c-2cc8-406e-ae94-23d30b9883f5)
+
+*![image](https://github.com/user-attachments/assets/252faf9c-2cc8-406e-ae94-23d30b9883f5)*
 
 ---
 
@@ -264,7 +267,7 @@ Instalaremos un Ubuntu cliente para así poder acceder a la interfaz de Proxmox 
 http://192.168.100.3:8006
 ```
 
-![image](https://github.com/user-attachments/assets/0cedb007-35a1-4d5d-b6a1-bdd004b9abfd)
+*![image](https://github.com/user-attachments/assets/0cedb007-35a1-4d5d-b6a1-bdd004b9abfd)*
 
 
 Una vez logueados, ya tendríamos disponible nuestra interfaz de Proxmox, la cual trataremos de utilizar lo menos posible ya que con Ansible, podremos gestionar la mayoría de las operaciones a realizar para el despliegue, aunque sí tendremos que usarla para algunas configuraciones.
@@ -272,14 +275,16 @@ Una vez logueados, ya tendríamos disponible nuestra interfaz de Proxmox, la cua
 ### 5. Creación de carpeta de trabajo:
 
 Una vez ya instalado y configurado Proxmox, ya podemos comenzar con la preparación del despliegue de la primera máquina. Para ello, nos dirigimos a la máquina Ansible y creamos una carpeta para el trabajo:
+
 *![image](https://github.com/user-attachments/assets/a45e3b75-8a5f-4496-baf7-968b8dcccff4)*
+
 Una vez creada la carpeta, organizaremos los archivos necesarios en 3 partes:
 
 - **Inventario**
 - **Playbooks**
 - **Cloud-init**
 
-![image](https://github.com/user-attachments/assets/ed84593a-228f-484d-be81-93404573ed17)
+*![image](https://github.com/user-attachments/assets/ed84593a-228f-484d-be81-93404573ed17)*
 
 ### 5. Creación de Inventario:
 
@@ -304,7 +309,8 @@ localhost ansible_connection=local ansible_python_interpreter=/usr/bin/python3
 snort ansible_host=192.168.100.10 ansible_user=carlos ansible_password=carlos ansible_become=true
 ```
 -**El inventario quedaría tal que así, guardado en un archivo .ini**
-![image](https://github.com/user-attachments/assets/63410708-1d6f-45ab-bfcf-599d112bc9ff)
+
+*![image](https://github.com/user-attachments/assets/63410708-1d6f-45ab-bfcf-599d112bc9ff)*
 
 ### 6. Creación de Playbook:
 
@@ -515,7 +521,8 @@ ethernets:
 Antes de ejecutar el playbook, debemos subir la imagen que tendrá la máquina que desplegaremos. Esto lo haremos mediante la interfaz gráfica.
 
 Para ello, nos direigimos a la interfaz proxmox, seleccionamos el nodo, seleccionamos el almacenamiento, vamos a ISOS y cargamos la imagen previamente descargada:
-![image](https://github.com/user-attachments/assets/c09288f3-0802-4f33-a65b-fd31d417c981)
+
+*![image](https://github.com/user-attachments/assets/c09288f3-0802-4f33-a65b-fd31d417c981)*
 
 ### 9. Ejecutar playbook y confirmar despliegue:
 
