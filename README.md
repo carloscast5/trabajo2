@@ -559,11 +559,11 @@ Una vez terminado el despliegue, nos dirigiremos a la interfaz Proxmox para comp
   
   *![image](https://github.com/user-attachments/assets/0c7cd2ed-6745-4c6f-a768-c8cad462f80c)*
 
-### 10. Despliegue de máquina OVA:
+## 10. Despliegue de máquina OVA:
 
 Una opción muy buena de proxmox y que nos ahorraría aún más tiempo, sería instalr una OVA con todo lo necesario para nuestro entorno de trabajo ya instaldo. Para ello, crearemos un playbook con los requerimientos necesarios:
   
-##  Descripción del Playbook
+###  Descripción del Playbook
 
 Este playbook permite automatizar todo el ciclo de vida de una VM a partir de una OVA:
 
@@ -658,7 +658,7 @@ Este playbook permite automatizar todo el ciclo de vida de una VM a partir de un
     - name: Iniciar la VM
       command: qm start {{ vm_id }}
 ```
-##  Descripción del Playbook
+###  Comprobar la OVA:
 
 Una vez creado el playbook, nos quedaría desplegarlo y comprobar que se ejecuta correctamente. Una vez se ejecute, comprobamos que se ha desplegado sin problemas:
 ![image](https://github.com/user-attachments/assets/d5dede77-811c-4d8f-912d-300c1f949d23)
