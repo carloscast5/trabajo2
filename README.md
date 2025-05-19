@@ -662,3 +662,5 @@ Este playbook permite automatizar todo el ciclo de vida de una VM a partir de un
 
 Una vez creado el playbook, nos quedaría desplegarlo y comprobar que se ejecuta correctamente. Una vez se ejecute, comprobamos que se ha desplegado sin problemas:
 ![image](https://github.com/user-attachments/assets/d5dede77-811c-4d8f-912d-300c1f949d23)
+
+**Cabe recalcar que todas las configuraciones deben venir previamente configuradas en la OVA, como por ejemplo, las redes o las reglas del Snort.
