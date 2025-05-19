@@ -575,5 +575,86 @@ Este playbook permite automatizar todo el ciclo de vida de una VM a partir de un
   
 **Y así quedaría mi playbook el cual logra desplegar la máquina correctamente:
 ```bash
+- name: Convertir misma OVA y desplegar segunda VM con 3 interfaces de red
+  hosts: pve
+  become: true
+  gather_facts: false
 
+  vars:
+    vm_id: 106  # ID distinto a la primera VM
+    vm_name: "ubuntu-snort-2"  # Nombre distinto
+    vm_memory: 4096
+    vm_cores: 2
+    storage: "local-lvm"
+    bridge: "vmbr0"
+    ova_path: "/var/lib/vz/template/iso/Snort_2.ova"  # MISMA OVA
+    extracted_dir: "/var/lib/vz/template/iso/snort2-vm2"  # Carpeta distinta
+    qcow2_path: "/var/lib/vz/template/iso/snort2-vm2/ubuntu-snort-2.qcow2"  # Disco diferente
+
+  tasks:
+
+    - name: Crear carpeta para extraer OVA
+      file:
+        path: "{{ extracted_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Extraer OVA
+      unarchive:
+        src: "{{ ova_path }}"
+        dest: "{{ extracted_dir }}"
+        remote_src: yes
+
+    - name: Buscar archivo VMDK
+      find:
+        paths: "{{ extracted_dir }}"
+        patterns: "*.vmdk"
+        recurse: no
+      register: vmdk_files
+
+    - name: Eliminar archivo existente disk.vmdk si ya existe
+      file:
+        path: "{{ extracted_dir }}/disk.vmdk"
+        state: absent
+
+    - name: Renombrar archivo VMDK a disk.vmdk
+      command: mv "{{ item.path }}" "{{ extracted_dir }}/disk.vmdk"
+      loop: "{{ vmdk_files.files }}"
+      loop_control:
+        loop_var: item
+      when: item.path != "{{ extracted_dir }}/disk.vmdk"
+
+    - name: Convertir VMDK a QCOW2
+      command: qemu-img convert -f vmdk -O qcow2 {{ extracted_dir }}/disk.vmdk {{ qcow2_path }}
+
+    - name: Crear VM vacía
+      command: >
+        qm create {{ vm_id }}
+        --name {{ vm_name }}
+        --memory {{ vm_memory }}
+        --cores {{ vm_cores }}
+
+    - name: Importar disco QCOW2
+      command: qm importdisk {{ vm_id }} {{ qcow2_path }} {{ storage }}
+
+    - name: Adjuntar disco como scsi0
+      command: qm set {{ vm_id }} --scsihw virtio-scsi-pci --scsi0 {{ storage }}:vm-{{ vm_id }}-disk-0
+
+    - name: Establecer disco de arranque
+      command: qm set {{ vm_id }} --boot order=scsi0
+
+    - name: Configurar salida gráfica estándar en la VM
+      command: qm set {{ vm_id }} --vga std --serial0 socket
+
+    - name: Añadir primera interfaz de red (net0)
+      command: qm set {{ vm_id }} --net0 virtio,bridge={{ bridge }}
+
+    - name: Añadir segunda interfaz de red (net1)
+      command: qm set {{ vm_id }} --net1 virtio,bridge={{ bridge }}
+
+    - name: Añadir tercera interfaz de red (net2)
+      command: qm set {{ vm_id }} --net2 virtio,bridge={{ bridge }}
+
+    - name: Iniciar la VM
+      command: qm start {{ vm_id }}
 ```
