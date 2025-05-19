@@ -563,4 +563,17 @@ Una vez terminado el despliegue, nos dirigiremos a la interfaz Proxmox para comp
 
 Una opción muy buena de proxmox y que nos ahorraría aún más tiempo, sería instalr una OVA con todo lo necesario para nuestro entorno de trabajo ya instaldo. Para ello, crearemos un playbook con los requerimientos necesarios:
   
+##  Descripción del Playbook
 
+Este playbook permite automatizar todo el ciclo de vida de una VM a partir de una OVA:
+
+- Extrae y convierte la imagen OVA.
+- Crea una VM vacía con la configuración deseada.
+- Importa y conecta el disco a la VM.
+- Establece opciones de arranque y salida gráfica.
+- Inicia la VM para que comience a ejecutarse.
+  
+**Y así quedaría mi playbook el cual logra desplegar la máquina correctamente:
+```bash
+
+```
