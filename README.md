@@ -559,6 +559,8 @@ Una vez terminado el despliegue, nos dirigiremos a la interfaz Proxmox para comp
   
   *![image](https://github.com/user-attachments/assets/0c7cd2ed-6745-4c6f-a768-c8cad462f80c)*
 
+### 10. Despliegue de máquina OVA:
 
+Una opción muy buena de proxmox y que nos ahorraría aún más tiempo, sería instalr una OVA con todo lo necesario para nuestro entorno de trabajo ya instaldo. Para ello, crearemos un playbook con los requerimientos necesarios:
   
 
