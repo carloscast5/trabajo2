@@ -259,6 +259,15 @@ Una vez instalada, borramos el disco de instalación.
 
 ---
 
+### Configuración de interfaces de red
+En este caso, configuré tres interfaces de red, conectadas a tres bridges de Proxmox que representan distintas zonas de red, a las cuales se conectarán las máquinas desplegadas en proxmox:
+
+| Interfaz | Bridge | Función | Subred          |
+|----------|--------|---------|-----------------|
+| net0     | vmbr0  | WAN     | 172.17.10.0/24  |
+| net1     | vmbr1  | LAN     | 192.168.10.0/24 |
+| net2     | vmbr2  | DMZ     | 192.168.20.0/24 |
+
 ### 4. Instalación Ubuntu Cliente:
 
 Instalaremos un Ubuntu cliente para así poder acceder a la interfaz de Proxmox y realizar nuestras configuraciones. Una vez instalado el Ubuntu cliente y configurada la red interna, nos dirigimos a Internet y ponemos:
@@ -664,3 +673,89 @@ Una vez creado el playbook, nos quedaría desplegarlo y comprobar que se ejecuta
 ![image](https://github.com/user-attachments/assets/d5dede77-811c-4d8f-912d-300c1f949d23)
 
 **Cabe recalcar que todas las configuraciones deben venir previamente configuradas en la OVA, como por ejemplo, las redes o las reglas del Snort.
+
+## 10. Despliegue de máquina OVA desde un QCOW2 directamente:
+
+Hay veces que nos encontraremos con el disco QCOW2 directamente para poder desplegarlo, sin tener que extraer carpetas ni convertir de un formato a otro.
+En esta sección explico cómo realicé el despliegue de una máquina virtual directamente desde un archivo en formato QCOW2 utilizando Ansible en un entorno Proxmox. Este método me resultó especialmente útil cuando trabajé con imágenes preconfiguradas como Kali Linux o Snort, que ya tenía en formato .qcow2, evitando así pasos adicionales de conversión desde OVA o VMDK.
+
+### Requisitos previos
+
+Para llevar a cabo este procedimiento, me aseguré de cumplir los siguientes requisitos:
+
+ -Tener el archivo .qcow2 copiado en el nodo Proxmox, concretamente en la ruta:
+
+```
+/var/lib/vz/template/iso/
+```
+
+ -Configurar la conectividad SSH entre mi máquina de control (donde ejecuto Ansible) y el nodo Proxmox.
+
+ -Tener Ansible instalado y correctamente autenticado con Proxmox.
+
+### Subida del QCOW2 al nodo
+Para subir la imagen QCOW2 al nodo, utilicé scp:
+
+```
+scp kali.qcow2 root@172.17.10.53:/var/lib/vz/template/iso/
+```
+### Playbook de Ansible para el despliegue
+```
+---
+- name: Desplegar VM KALI con 3 interfaces de red
+  hosts: pve
+  become: true
+  gather_facts: false
+
+  vars:
+    vm_id: 105
+    vm_name: "kali"
+    vm_memory: 4096
+    vm_cores: 2
+    storage: "local-lvm"
+    bridge_wan: "vmbr0"
+    bridge_lan: "vmbr1"
+    bridge_dmz: "vmbr2"
+    qcow2_path: "/var/lib/vz/template/iso/kali-linux-2025.1c-qemu-amd64.qcow2"
+
+  tasks:
+
+    - name: Crear VM vacía
+      command: >
+        qm create {{ vm_id }}
+        --name {{ vm_name }}
+        --memory {{ vm_memory }}
+        --cores {{ vm_cores }}
+
+    - name: Importar disco QCOW2
+      command: qm importdisk {{ vm_id }} {{ qcow2_path }} {{ storage }}
+
+    - name: Adjuntar disco como scsi0
+      command: qm set {{ vm_id }} --scsihw virtio-scsi-pci --scsi0 {{ storage }}:vm-{{ vm_id }}-disk-0
+
+    - name: Establecer disco de arranque
+      command: qm set {{ vm_id }} --boot order=scsi0
+
+    - name: Configurar salida gráfica estándar en la VM
+      command: qm set {{ vm_id }} --vga std --serial0 socket
+
+    - name: Añadir interfaz de red WAN (net0)
+      command: qm set {{ vm_id }} --net0 virtio,bridge={{ bridge_wan }}
+
+    - name: Añadir interfaz de red LAN (net1)
+      command: qm set {{ vm_id }} --net1 virtio,bridge={{ bridge_lan }}
+
+    - name: Añadir interfaz de red DMZ (net2)
+      command: qm set {{ vm_id }} --net2 virtio,bridge={{ bridge_dmz }}
+
+    - name: Iniciar la VM
+      command: qm start {{ vm_id }}
+```
+
+### Comprobamos el despliegue
+
+![image](https://github.com/user-attachments/assets/d31307d9-2229-4584-ab1d-337a88c45130)
+
+
+![image](https://github.com/user-attachments/assets/743d95c1-e33b-4e70-8c77-0e98d0626f8d)
+
