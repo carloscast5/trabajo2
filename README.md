@@ -213,29 +213,7 @@ ansible-galaxy collection install community.general
 
 Instalamos también `proxmoxer` y `requests` haciendo uso de pip, pero primero, instalamos `venv`, el cual nos proporcionará un entorno virtual para Python:
 
-```bash
-sudo apt install -y python3-venv
-```
-
-Creamos el entorno:
-
-```bash
-python3 -m venv myenv
-```
-
-Lo activamos:
-
-```bash
-source myenv/bin/activate
-```
-
-Instalamos los paquetes:
-
-```bash
-sudo pip3 install proxmoxer request
-```
-
-Si nos da error esto, lo instalaremos mediante paquetes de Ubuntu:
+Lo instalaremos mediante paquetes de Ubuntu:
 
 ```bash
 sudo apt install -y python3-requests python3-proxmoxer
@@ -281,7 +259,11 @@ http://192.168.100.3:8006
 
 Una vez logueados, ya tendríamos disponible nuestra interfaz de Proxmox, la cual trataremos de utilizar lo menos posible ya que con Ansible, podremos gestionar la mayoría de las operaciones a realizar para el despliegue, aunque sí tendremos que usarla para algunas configuraciones.
 
-### 5. Creación de carpeta de trabajo:
+### Varios tipos de despliegue
+
+## Despliegue desde imagen cloud-init
+
+### 1. Creación de carpeta de trabajo:
 
 Una vez ya instalado y configurado Proxmox, ya podemos comenzar con la preparación del despliegue de la primera máquina. Para ello, nos dirigimos a la máquina Ansible y creamos una carpeta para el trabajo:
 
@@ -295,7 +277,7 @@ Una vez creada la carpeta, organizaremos los archivos necesarios en 3 partes:
 
 *![image](https://github.com/user-attachments/assets/ed84593a-228f-484d-be81-93404573ed17)*
 
-### 5. Creación de Inventario:
+### 2. Creación de Inventario:
 
 Comenzaremos a crear nuestro inventario. Un inventario en Ansible es simplemente un archivo o una lista que contiene los detalles de los servidores o máquinas a los que Ansible debe conectarse para ejecutar tareas. Este archivo especifica las direcciones IP, nombres de host, o grupos de servidores que quieres gestionar, lo que permite a Ansible saber a dónde enviar las instrucciones. Es como una agenda donde se guardan los contactos (servidores) con los que vas a trabajar. Como de momento solo vamos a desplegar una máquina, este será bastante sencillito, pero se complicará más cuando el despliegue sea más completo.
 
@@ -321,7 +303,7 @@ snort ansible_host=192.168.100.10 ansible_user=carlos ansible_password=carlos an
 
 *![image](https://github.com/user-attachments/assets/63410708-1d6f-45ab-bfcf-599d112bc9ff)*
 
-### 6. Creación de Playbook:
+### 3. Creación de Playbook:
 
 Una vez creado el inventario, procederemos a crear el Playbook para el despliegue de la máquina. Un playbook en Ansible es un archivo donde defines una serie de tareas o acciones que quieres que Ansible ejecute en tus máquinas. Es como una receta o un conjunto de instrucciones que le dices a Ansible para automatizar tareas, como instalar programas, configurar servicios, o hacer cambios en los sistemas. Cada tarea en un playbook describe qué hacer, en qué máquinas hacerlo y cómo hacerlo.
 
@@ -446,7 +428,7 @@ Una vez creado el inventario, procederemos a crear el Playbook para el despliegu
         timeout: 300
       delegate_to: localhost
 ```
-### 7. Configuración Cloud-Init:
+### 4. Configuración Cloud-Init:
 
 Debemos crear y configurar una carpeta cloud-init para la máquina. ¿Por qué? Configurar Cloud-Init en esta máquina virtual es necesario porque Cloud-Init permite automatizar la configuración inicial del sistema operativo cuando la máquina se inicia por primera vez. En este caso, la configuración de Cloud-Init hace lo siguiente:
 
@@ -525,7 +507,7 @@ ethernets:
     nameservers:
       addresses: [8.8.8.8, 1.1.1.1]
 ```
-### 8. Subir imagen a proxmox:
+### 5. Subir imagen a proxmox:
 
 Antes de ejecutar el playbook, debemos subir la imagen que tendrá la máquina que desplegaremos. Esto lo haremos mediante la interfaz gráfica.
 
@@ -533,7 +515,7 @@ Para ello, nos direigimos a la interfaz proxmox, seleccionamos el nodo, seleccio
 
 *![image](https://github.com/user-attachments/assets/c09288f3-0802-4f33-a65b-fd31d417c981)*
 
-### 9. Ejecutar playbook y confirmar despliegue:
+### 6. Ejecutar playbook y confirmar despliegue:
 
 Una vez preparados todos los archivos y la imagen, tendríamos todo listo para ejecutar el playbook y conseguir el despliegue de la primera máquina. Para ello, ejecutamos el comando siguiente:
 ```bash
@@ -547,7 +529,7 @@ Con este comando, ejecutaremos el playbook que orquesta el despliegue como root.
 
 **Como se indica, todo está correcto (changed indica que se han aplicado cambios)**
 
-### 10. Confirmación de la máquina:
+### 7. Confirmación de la máquina:
 
 Una vez terminado el despliegue, nos dirigiremos a la interfaz Proxmox para comprobar que todo ha sido creado correctamente:
 - **Su configuración hardware**
