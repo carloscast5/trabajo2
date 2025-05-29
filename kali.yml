@@ -1,0 +1,49 @@
+---
+- name: Desplegar VM KALI con 3 interfaces de red
+  hosts: pve
+  become: true
+  gather_facts: false
+
+  vars:
+    vm_id: 105
+    vm_name: "kali"
+    vm_memory: 4096
+    vm_cores: 2
+    storage: "local-lvm"
+    bridge_wan: "vmbr0"
+    bridge_lan: "vmbr1"
+    bridge_dmz: "vmbr2"
+    qcow2_path: "/var/lib/vz/template/iso/kali-linux-2025.1c-qemu-amd64.qcow2"
+
+  tasks:
+
+    - name: Crear VM vacía
+      command: >
+        qm create {{ vm_id }}
+        --name {{ vm_name }}
+        --memory {{ vm_memory }}
+        --cores {{ vm_cores }}
+
+    - name: Importar disco QCOW2
+      command: qm importdisk {{ vm_id }} {{ qcow2_path }} {{ storage }}
+
+    - name: Adjuntar disco como scsi0
+      command: qm set {{ vm_id }} --scsihw virtio-scsi-pci --scsi0 {{ storage }}:vm-{{ vm_id }}-disk-0
+
+    - name: Establecer disco de arranque
+      command: qm set {{ vm_id }} --boot order=scsi0
+
+    - name: Configurar salida gráfica estándar en la VM
+      command: qm set {{ vm_id }} --vga std --serial0 socket
+
+    - name: Añadir interfaz de red WAN (net0)
+      command: qm set {{ vm_id }} --net0 virtio,bridge={{ bridge_wan }}
+
+    - name: Añadir interfaz de red LAN (net1)
+      command: qm set {{ vm_id }} --net1 virtio,bridge={{ bridge_lan }}
+
+    - name: Añadir interfaz de red DMZ (net2)
+      command: qm set {{ vm_id }} --net2 virtio,bridge={{ bridge_dmz }}
+
+    - name: Iniciar la VM
+      command: qm start {{ vm_id }}
