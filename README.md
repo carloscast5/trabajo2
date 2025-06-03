@@ -61,7 +61,7 @@ Con este proyecto, se pretende abordar estos desafíos mediante el uso de Proxmo
 ### Funcionalidad que se Implementará:
 
 - **Instalación de Ansible en el Servidor Físico:** Configuración del servidor físico para ejecutar Ansible.  
-- **Despliegue de Proxmox VE:** Instalación y configuración de Proxmox VE utilizando Ansible.  
+- **Despliegue de Proxmox VE:** Instalación y configuración de Proxmox VE.  
 - **Automatización con Ansible:** Creación de playbooks de Ansible para automatizar el despliegue y configuración de máquinas virtuales en Proxmox.  
 - **Gestión de Máquinas Virtuales:** Configuración de almacenamiento y redes, creación de plantillas de VMs, y despliegue de varias VMs con diferentes configuraciones.  
 - **Monitorización y Mantenimiento:** Implementación de herramientas de monitorización para supervisar el estado de las VMs y el servidor Proxmox.
@@ -75,7 +75,7 @@ Con este proyecto, se pretende abordar estos desafíos mediante el uso de Proxmo
 
 **Despliegue de Proxmox VE:**
 
-- Descargar e instalar Proxmox VE en el servidor físico utilizando Ansible.  
+- Descargar e instalar Proxmox VE en el servidor físico.  
 - Configurar el almacenamiento y las redes necesarias.  
 - Crear plantillas de VMs para agilizar futuros despliegues.
 
@@ -741,3 +741,55 @@ scp kali.qcow2 root@172.17.10.53:/var/lib/vz/template/iso/
 
 ![image](https://github.com/user-attachments/assets/743d95c1-e33b-4e70-8c77-0e98d0626f8d)
 
+## Clonado de una Máquina Virtual desde Plantilla en Proxmox
+
+Una vez creada la plantilla base (por ejemplo, desde una OVA previamente importada y personalizada), es posible clonar dicha plantilla para desplegar nuevas máquinas virtuales de forma rápida y consistente.
+
+### 1. Verificar Plantillas Disponibles
+
+Primero, se puede listar el estado actual de las máquinas virtuales y plantillas con el siguiente comando:
+
+```bash
+qm list
+```
+
+Las plantillas aparecerán indicadas como `template` en la columna correspondiente.
+
+### 2. Clonar la Plantilla
+
+Se utiliza el siguiente comando para clonar la plantilla. Este proceso genera una nueva máquina virtual completamente funcional a partir de la plantilla:
+
+```bash
+qm clone <ID_plantilla> <ID_nueva_vm> --name <nombre_nuevo>
+```
+
+**Ejemplo práctico:**
+
+```bash
+qm clone 105 108 --name kali-clonada
+```
+
+Esto crea una nueva máquina virtual con ID `108` y nombre `kali-clonada` a partir de la plantilla con ID `9000`.
+
+
+### 3. Configuración de las Interfaces de Red
+
+Después del clonado, se pueden configurar las interfaces de red necesarias en la nueva VM:
+
+```bash
+qm set 108 --net0 virtio,bridge=vmbr1
+qm set 108 --net1 virtio,bridge=vmbr2
+qm set 108 --net2 virtio,bridge=vmbr3
+```
+
+### 4. Iniciar la Máquina Virtual Clonada
+
+Por último, se inicia la nueva máquina virtual con:
+
+```bash
+qm start 108
+```
+
+---
+
+De esta manera, es posible generar múltiples entornos replicables a partir de una imagen base, optimizando el tiempo de despliegue y manteniendo coherencia en los entornos de laboratorio.
