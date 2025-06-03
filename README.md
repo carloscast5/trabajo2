@@ -766,7 +766,7 @@ qm clone <ID_plantilla> <ID_nueva_vm> --name <nombre_nuevo>
 **Ejemplo práctico:**
 
 ```bash
-qm clone 105 108 --name kali-clonada
+qm clone 105 108 --name kali
 ```
 
 Esto crea una nueva máquina virtual con ID `108` y nombre `kali` a partir de la plantilla con ID `105`.
@@ -793,3 +793,9 @@ qm start 108
 ---
 
 De esta manera, es posible generar múltiples entornos replicables a partir de una imagen base, optimizando el tiempo de despliegue y manteniendo coherencia en los entornos de laboratorio.
+
+Como podemos observar, aquí tenemos la máquina que usaremos como plantilla y seguidamente los clones que hemos realizado con ella:
+
+![Captura de pantalla 2025-06-03 140051](https://github.com/user-attachments/assets/726eaa3e-f5c5-4312-b7e4-d9702cc01d58)
+
+![Captura de pantalla 2025-06-03 140457](https://github.com/user-attachments/assets/6e3ed693-17e7-4567-85c7-ecaa28e6a9da)
