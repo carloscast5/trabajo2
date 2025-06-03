@@ -769,7 +769,7 @@ qm clone <ID_plantilla> <ID_nueva_vm> --name <nombre_nuevo>
 qm clone 105 108 --name kali-clonada
 ```
 
-Esto crea una nueva máquina virtual con ID `108` y nombre `kali-clonada` a partir de la plantilla con ID `9000`.
+Esto crea una nueva máquina virtual con ID `108` y nombre `kali` a partir de la plantilla con ID `105`.
 
 
 ### 3. Configuración de las Interfaces de Red
