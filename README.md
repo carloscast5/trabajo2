@@ -972,3 +972,78 @@ Durante el desarrollo y despliegue automatizado con Ansible y Proxmox, me he enc
 
 **Conclusión:**  
 Los errores forman parte natural del proceso de automatización y despliegue. La clave está en saber interpretarlos, buscar la causa raíz y documentar las soluciones, lo que a la larga ahorra tiempo y mejora la calidad de los despliegues futuros.
+
+# 9. Conclusión
+
+A lo largo de este proyecto he podido comprobar de primera mano la importancia de la automatización y la virtualización en la administración de sistemas modernos. Trabajar con herramientas como Proxmox y Ansible no solo me ha permitido ahorrar tiempo y esfuerzo en la creación y gestión de laboratorios virtuales, sino que también me ha ayudado a entender cómo se trabaja actualmente en empresas y centros de datos profesionales.
+
+Gracias a este proyecto he aprendido a planificar y documentar procesos de despliegue, a resolver problemas reales que surgen en el día a día y a diseñar entornos reproducibles y escalables, algo fundamental tanto en el mundo educativo como en el profesional. Además, me ha servido para mejorar mis habilidades de troubleshooting y a valorar la importancia de dejar constancia clara de los procedimientos, para que cualquier persona pueda repetirlos o mejorarlos en el futuro.
+
+Considero que este trabajo es muy útil para el ciclo formativo de ASIR porque acerca a los alumnos a herramientas y metodologías de uso real en la industria, fomenta el trabajo en equipo y la buena documentación, y facilita la creación de laboratorios prácticos para las asignaturas técnicas. Además, puede servir de base para futuros proyectos más ambiciosos o para la integración con otras tecnologías como la monitorización, la seguridad o el despliegue en la nube.
+
+---
+
+# 10. Bibliografía / recursos
+
+- [Documentación oficial de Proxmox VE](https://pve.proxmox.com/pve-docs/)
+- [Documentación oficial de Ansible](https://docs.ansible.com/)
+- [Colección community.general de Ansible](https://docs.ansible.com/ansible/latest/collections/community/general/index.html)
+- [Proxmoxer Python API](https://proxmoxer.readthedocs.io/en/latest/)
+- [Guía Cloud-Init](https://cloudinit.readthedocs.io/en/latest/)
+- [Repositorio oficial de Proxmox en GitHub](https://github.com/proxmox)
+- [Repositorio oficial de Ansible en GitHub](https://github.com/ansible/ansible)
+- [Manual de instalación de Proxmox VE](https://pve.proxmox.com/wiki/Install_Proxmox_VE_on_Debian_12_Bookworm)
+- [QEMU/KVM Documentation](https://www.qemu.org/documentation/)
+- [Tutoriales de Virtualización en YouTube](https://www.youtube.com/results?search_query=proxmox+ansible)
+- [Foros oficiales de Proxmox](https://forum.proxmox.com/)
+- [Foros de Stack Overflow](https://stackoverflow.com/questions/tagged/ansible+proxmox)
+- [Blog de Adictos al Trabajo - Automatización con Ansible y Proxmox](https://www.adictosaltrabajo.com/2022/10/26/automatizando-proxmox-con-ansible/)
+- [Linux Handbook: Ansible Playbooks](https://linuxhandbook.com/ansible-playbook-examples/)
+- [Ejemplo de despliegue de VM con Cloud-Init en Proxmox](https://www.servethehome.com/using-cloud-init-images-to-deploy-ubuntu-vms-on-proxmox-ve/)
+
+---
+
+# 11. Glosario
+
+- **Ansible**: Herramienta de automatización que permite gestionar la configuración, el despliegue y la orquestación de servidores desde archivos de texto (playbooks).
+- **API (Application Programming Interface)**: Conjunto de funciones y protocolos que permite que programas diferentes se comuniquen entre sí y automaticen tareas.
+- **Backup**: Copia de seguridad de datos o sistemas para poder restaurarlos en caso de pérdida o fallo.
+- **Bridge**: Dispositivo virtual de red que simula un switch y permite conectar varias máquinas virtuales a la misma red física o virtual.
+- **Cloud-Init**: Herramienta para la configuración automática de sistemas operativos la primera vez que arrancan, usando archivos de configuración.
+- **Clúster**: Conjunto de servidores o nodos que trabajan juntos para aumentar la disponibilidad y/o la capacidad de procesamiento.
+- **Contenedor LXC**: Tecnología de virtualización ligera incluida en Proxmox para crear contenedores Linux (similares a Docker, pero más integrados en el sistema).
+- **CPU (Central Processing Unit)**: Unidad central de procesamiento, es decir, el “cerebro” de un ordenador que ejecuta las instrucciones.
+- **Disco QCOW2**: Formato de disco virtual usado por QEMU/KVM, muy útil por su flexibilidad y soporte para snapshots.
+- **DHCP (Dynamic Host Configuration Protocol)**: Protocolo que asigna automáticamente direcciones IP y otros parámetros de red a los dispositivos.
+- **DNS (Domain Name System)**: Sistema que traduce nombres de dominio (como google.com) en direcciones IP.
+- **Gateway**: Puerta de enlace que conecta una red local con otras redes, normalmente con Internet.
+- **Git**: Sistema de control de versiones distribuido que permite gestionar el historial de archivos y la colaboración en proyectos.
+- **Host**: Cualquier máquina física o virtual que forma parte de una red.
+- **Hypervisor**: Programa o sistema que permite ejecutar varias máquinas virtuales sobre un hardware físico.
+- **Idempotencia**: Propiedad de los playbooks de Ansible por la cual, aunque se ejecuten varias veces, el resultado siempre será el mismo y no se harán cambios innecesarios.
+- **Inventario**: Archivo de texto donde se listan los servidores que Ansible va a gestionar.
+- **IP (Internet Protocol)**: Número que identifica de manera única a un dispositivo en una red.
+- **KVM**: (Kernel-based Virtual Machine) Tecnología de virtualización integrada en el kernel de Linux que permite ejecutar máquinas virtuales de alto rendimiento.
+- **LVM (Logical Volume Manager)**: Sistema para gestionar particiones y volúmenes lógicos en discos duros, permitiendo mayor flexibilidad.
+- **Monitorización**: Proceso de supervisar el estado y el rendimiento de sistemas, redes o servicios.
+- **Nodo**: Cada uno de los servidores físicos o virtuales que forman parte de una infraestructura o clúster.
+- **OVA (Open Virtual Appliance)**: Formato estándar para distribuir máquinas virtuales completas, que incluye la configuración y el disco duro virtual.
+- **Playbook**: Archivo en formato YAML que define un conjunto de tareas automatizadas que Ansible debe ejecutar en uno o varios servidores.
+- **Proxmox VE**: Plataforma de virtualización de código abierto basada en Debian, usada para crear y gestionar máquinas virtuales y contenedores.
+- **Provisionar**: El proceso de preparar y configurar un sistema o servicio para su uso.
+- **RAM (Random Access Memory)**: Memoria principal de un ordenador, donde se almacenan datos y programas mientras están en uso.
+- **Red LAN (Local Area Network)**: Red local que conecta dispositivos en una zona limitada, como un aula o una oficina.
+- **Red WAN (Wide Area Network)**: Red que conecta diferentes redes LAN a grandes distancias.
+- **Repositorio**: Lugar centralizado donde se almacenan y gestionan archivos y versiones de un proyecto (por ejemplo, en GitHub).
+- **Rol (Role)**: En Ansible, un conjunto de tareas, archivos y variables agrupadas para ser reutilizadas fácilmente.
+- **Root**: Usuario administrador en sistemas Linux, con todos los permisos.
+- **Script**: Archivo de texto que contiene una serie de comandos que se ejecutan de forma automática.
+- **Servidor**: Ordenador que ofrece servicios o recursos a otros equipos (clientes) en una red.
+- **Snapshot**: Copia puntual del estado de una máquina virtual o sistema, útil para restaurar en caso de problemas.
+- **SSH (Secure Shell)**: Protocolo seguro para conectarse y administrar servidores de forma remota.
+- **Storage**: Espacio de almacenamiento donde se guardan discos de máquinas virtuales, ISOs, backups, etc. en Proxmox.
+- **Template (Plantilla)**: Máquina virtual o configuración base que se usa para crear rápidamente nuevas máquinas idénticas.
+- **Usuario sudo**: Usuario que tiene permisos para ejecutar tareas administrativas en Linux.
+- **VM (Virtual Machine)**: Máquina Virtual, es decir, un ordenador “virtual” que funciona dentro de otro físico o virtualizador.
+- **VLAN (Virtual LAN)**: Red lógica dentro de una red física que aísla grupos de dispositivos como si estuvieran en redes separadas.
+- **YAML**: Formato de texto fácil de leer y escribir, usado para definir la configuración de playbooks en Ansible y otros sistemas.
