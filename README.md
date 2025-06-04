@@ -843,3 +843,120 @@ Como podemos observar, aquí tenemos la máquina que usaremos como plantilla y s
 ![Captura de pantalla 2025-06-03 140051](https://github.com/user-attachments/assets/726eaa3e-f5c5-4312-b7e4-d9702cc01d58)
 
 ![Captura de pantalla 2025-06-03 140457](https://github.com/user-attachments/assets/6e3ed693-17e7-4567-85c7-ecaa28e6a9da)
+
+## Errores encontrados y soluciones aplicadas
+
+Durante el desarrollo y despliegue automatizado con Ansible y Proxmox, me he encontrado con diversos errores y obstáculos técnicos. A continuación detallo algunos de los problemas reales que han surgido, cómo los he solucionado y recojo también los errores más habituales que suelen aparecer en este tipo de despliegues según la experiencia y la documentación de la comunidad.
+
+---
+
+### Errores reales durante mi proyecto y sus soluciones
+
+1. **Error de autenticación SSH entre Ansible y Proxmox**
+   - **Síntoma:** Al lanzar playbooks contra el nodo Proxmox, aparecía el error `Permission denied (publickey,password)`.
+   - **Solución:**  
+     - Verifiqué que el usuario y la contraseña en el inventario eran correctos.
+     - Probé la conexión SSH manualmente (`ssh root@<IP-DEL-PROXMOX>`).
+     - Tuve que copiar la clave pública SSH del servidor Ansible al nodo Proxmox con `ssh-copy-id`.
+     - En algunos casos, fue necesario habilitar el acceso por contraseña en el archivo `/etc/ssh/sshd_config` y reiniciar el servicio SSH.
+
+2. **Fallo en módulos de Ansible por dependencias de Python**
+   - **Síntoma:** Errores tipo `ModuleNotFoundError: No module named 'proxmoxer'` o problemas con la colección community.general.
+   - **Solución:**  
+     - Instalé los módulos necesarios con `pip install proxmoxer requests`.
+     - Verifiqué que el entorno virtual Python estuviera correctamente activado.
+     - Instalé la colección de Ansible necesaria con `ansible-galaxy collection install community.general`.
+
+3. **Error al importar imágenes QCOW2/OVA**
+   - **Síntoma:** El comando `qm importdisk` fallaba porque la ruta del archivo era incorrecta o porque el almacenamiento seleccionado no era válido.
+   - **Solución:**  
+     - Revisé que la ruta de la imagen estuviera correctamente escrita y el archivo efectivamente subido al nodo.
+     - Comprobé el nombre del almacenamiento en Proxmox (`local-lvm`, `local`, etc.).
+     - Cambié permisos de archivos si era necesario (`chmod`).
+
+4. **Problemas con Cloud-Init**
+   - **Síntoma:** La máquina virtual desplegada no aplicaba la configuración de red o usuario definida en los archivos de Cloud-Init.
+   - **Solución:**  
+     - Verifiqué la sintaxis de los archivos YAML (`user-data` y `network-config`).
+     - Confirmé que los archivos se copiaban correctamente en la ruta de snippets de Proxmox.
+     - Aseguré que la VM tuviera el disco de Cloud-Init correctamente adjunto y que el arranque fuera desde dicho disco.
+
+5. **Errores de permisos en Proxmox**
+   - **Síntoma:** Mensajes de `permission denied` o errores al intentar crear VMs desde Ansible.
+   - **Solución:**  
+     - Utilicé el usuario `root@pam` para las pruebas.
+     - Más adelante, creé un usuario con permisos estrictamente necesarios y le asigné los roles apropiados en Proxmox.
+
+6. **Fallo en ejecución de playbooks por rutas relativas**
+   - **Síntoma:** Ansible no encontraba archivos de plantillas o imágenes (`template not found`).
+   - **Solución:**  
+     - Usé rutas absolutas en los playbooks y aseguré que la estructura de carpetas fuera consistente.
+     - Añadí tareas para crear directorios si no existían (`file: state=directory`).
+
+7. **Error con la opción KVM habilitada o deshabilitada**
+   - **Síntoma:** Al desplegar algunas máquinas virtuales, especialmente imágenes cloud-init o appliances importados, la VM no arrancaba correctamente o mostraba errores relacionados con la compatibilidad de hardware virtual (por ejemplo, pantallas negras, errores de arranque, o mensajes como "KVM virtualization not supported").
+   - **Causa:**  
+     - No todas las imágenes o sistemas operativos soportan la virtualización KVM (Kernel-based Virtual Machine) de la misma manera. Por ejemplo, algunas imágenes cloud-init o appliances pueden necesitar que KVM esté desactivado para funcionar correctamente, mientras que otras requieren que esté habilitado para aprovechar la aceleración por hardware.
+   - **Solución:**  
+     - Para imágenes que daban problemas, utilicé el comando:  
+       ```bash
+       qm set <vm_id> --kvm 0
+       ```
+       (esto desactiva KVM para esa VM).
+     - Para sistemas que sí soportan KVM (la mayoría de sistemas Linux modernos y Windows actuales), aseguré que KVM estuviera activado con:  
+       ```bash
+       qm set <vm_id> --kvm 1
+       ```
+     - En Ansible, lo gestioné con tareas condicionales según el tipo de imagen o sistema operativo.
+     - Comprobé en la documentación oficial y foros si la imagen tenía requisitos especiales sobre KVM.
+
+---
+
+### Errores comunes en despliegues Proxmox + Ansible y cómo prevenirlos
+
+1. **Mal formateo del inventario de Ansible**
+   - Puede provocar que las tareas no se ejecuten en los hosts correctos.  
+   - **Prevención:** Validar sintaxis e IPs, y hacer pruebas con un inventario mínimo.
+
+2. **Problemas con dependencias de Ansible/Python**
+   - Si falta alguna colección o módulo, los playbooks fallarán.
+   - **Prevención:** Instalar todas las dependencias y usar entornos virtuales.
+
+3. **Errores de permisos o autenticación**
+   - El acceso como root puede estar deshabilitado o mal configurado.
+   - **Prevención:** Probar siempre el acceso SSH manualmente antes de automatizar.
+
+4. **Falta de recursos físicos**
+   - Si el nodo Proxmox no tiene suficiente RAM/CPU/almacenamiento, los despliegues fallan.
+   - **Prevención:** Monitorizar recursos y ajustar tamaños de VM según disponibilidad.
+
+5. **Errores en la red**
+   - Una configuración incorrecta de bridges, interfaces o cloud-init puede dejar VMs sin conectividad.
+   - **Prevención:** Probar la conectividad tras cada paso y documentar las configuraciones de red.
+
+6. **Playbooks no idempotentes**
+   - Si los playbooks no están bien diseñados, pueden dejar la infraestructura en un estado inconsistente.
+   - **Prevención:** Usar buenas prácticas de Ansible y probar siempre con `--check`.
+
+7. **Errores en rutas o nombres de almacenamiento en Proxmox**
+   - Si se usa un nombre incorrecto, los comandos de creación de disco o importación fallan.
+   - **Prevención:** Comprobar los nombres exactos en la interfaz de Proxmox antes de lanzar los playbooks.
+
+8. **Errores con la aceleración KVM (añadido)**
+   - Algunos sistemas/appliances requieren desactivar KVM, otros requieren activarlo.
+   - **Prevención:** Revisar los requisitos de cada imagen, y adaptar el parámetro `--kvm` según corresponda. Probar ambos modos si aparecen errores de arranque.
+
+---
+
+### Recomendaciones generales para solución de problemas
+
+- Leer cuidadosamente los logs de Ansible y Proxmox.
+- Probar manualmente los comandos antes de automatizarlos.
+- Comenzar con despliegues sencillos e ir añadiendo complejidad progresivamente.
+- Documentar cada error y su solución para futuras referencias.
+- Mantener todos los sistemas y dependencias actualizados.
+
+---
+
+**Conclusión:**  
+Los errores forman parte natural del proceso de automatización y despliegue. La clave está en saber interpretarlos, buscar la causa raíz y documentar las soluciones, lo que a la larga ahorra tiempo y mejora la calidad de los despliegues futuros.
