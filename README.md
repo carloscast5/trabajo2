@@ -37,6 +37,19 @@ Este proyecto se centra en la automatización del despliegue y gestión de infra
 - **Centro educativo:** IES Albarregas  
 
 ---
+## 2. Planteamiento del problema a resolver
+
+Cuando tenemos que montar laboratorios o entornos de prácticas en clase, normalmente hay que crear muchas máquinas virtuales, instalarles los sistemas operativos, configurar la red, poner usuarios y dejarlo todo listo para usar. Si esto lo hacemos a mano, cada vez que un profesor o un alumno necesita un entorno nuevo, hay que repetir todos los pasos uno a uno: descargar la ISO, instalar, poner la IP, instalar programas, etc.
+
+Esto no solo lleva **mucho tiempo** y es **aburrido**, sino que además **es fácil cometer errores**: a veces se nos olvida algún paso, otras veces no ponemos las mismas configuraciones, o si tenemos que repetir todo para otro grupo, puede que no quede igual. Si encima hay que montar muchas máquinas, la cosa se complica mucho y puede ser un lío.
+
+Además, si alguien nuevo llega y quiere repetir la práctica, a veces no está claro qué hay que hacer o cómo lo hicimos la vez anterior, porque no está bien documentado o cada uno lo hace a su manera.
+
+Por eso, el **problema principal** es que hacer todo esto de forma manual es lento, poco fiable y difícil de repetir siempre igual. Esto hace que sea complicado montar laboratorios grandes, corregir errores o simplemente ahorrar tiempo para dedicarlo a otras tareas más útiles.
+
+La solución que planteo es automatizarlo todo, para que con unos pocos comandos se puedan crear y configurar todas las máquinas de manera rápida, igual para todos y sin errores, haciendo el trabajo mucho más fácil para profesores y alumnos.
+
+---
 ## 3. Justificación y objetivos
 
 ### Justificación del Proyecto:
