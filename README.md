@@ -107,6 +107,50 @@ Con este proyecto, se pretende abordar estos desafíos mediante el uso de Proxmo
 
 ---
 
+## Comparativa: Proxmox + Ansible vs. Vagrant
+
+### ¿Qué es Vagrant?
+[Vagrant](https://www.vagrantup.com/) es una herramienta de automatización de entornos de desarrollo que permite crear y gestionar máquinas virtuales de forma sencilla, principalmente sobre hipervisores locales como VirtualBox, VMware, Hyper-V o incluso sobre proveedores cloud. Se utiliza mucho para laboratorios, testing y desarrollo de software, ya que facilita la creación de entornos reproducibles con simples archivos de configuración llamados `Vagrantfile`.
+
+---
+
+### Tabla comparativa
+
+| Característica           | Proxmox + Ansible                               | Vagrant                        |
+|--------------------------|------------------------------------------------|-------------------------------|
+| **Enfoque**              | Administración, automatización y orquestación de infraestructuras reales y de laboratorio, con gestión de redes, almacenamiento, clúster, alta disponibilidad, etc. | Automatización de entornos de desarrollo y pruebas, principalmente orientado a la creación rápida de VMs locales para desarrolladores. |
+| **Hipervisor**           | Proxmox (KVM y LXC, orientado a servidores)    | VirtualBox, VMware, Hyper-V, Docker (orientado a escritorio/desarrollo) |
+| **Escalabilidad**        | Muy alta: soporta clúster, HA, redes avanzadas, almacenamiento centralizado, cientos de VMs y contenedores. | Limitada al entorno local o a lo que soporte el hipervisor subyacente. |
+| **Automatización**       | Ansible permite automatizar desde la provisión hasta la configuración avanzada, integración con monitorización, backups, etc. | Automatización básica de aprovisionamiento y configuración inicial con shell scripts, Ansible, Puppet, Chef, etc. |
+| **Producción**           | Es un stack utilizado en entornos reales y empresariales, tanto para laboratorios como para producción. | Muy orientado a desarrollo, no a sistemas en producción. |
+| **Integración con otras herramientas** | Muy buena: Ansible es estándar en automatización, Proxmox tiene API y soporte para herramientas de backup, monitorización, etc. | Puede integrarse con herramientas de configuración, pero el ciclo de vida está enfocado a la VM local. |
+| **Gestión de red y almacenamiento** | Completa: bridges, VLANs, almacenamiento compartido, snapshots, etc. | Limitada, depende del hipervisor (VirtualBox, etc.). |
+| **Interfaz de usuario**  | Web, CLI y API REST (Proxmox), CLI y YAML (Ansible) | CLI (vagrant), algunos plugins GUI pero limitada |
+| **Reproducibilidad**     | Muy alta, infraestructuras complejas replicables y versionables (IaC). | Muy buena para entornos simples de desarrollo. |
+
+---
+
+### ¿Por qué Proxmox + Ansible es más adecuado en este TFG?
+
+- **Enfoque profesional y educativo:** Proxmox + Ansible permite trabajar con una infraestructura más parecida a la que se encuentra en empresas (clúster, alta disponibilidad, redes avanzadas, gestión de usuarios, snapshots, backups centralizados, etc.), mientras que Vagrant está pensado para laboratorios de desarrollo locales.
+- **Escalabilidad y flexibilidad:** Proxmox puede manejar decenas o cientos de VMs y contenedores, con almacenamiento y redes avanzadas, lo que resulta idóneo para simular escenarios complejos o reales en el aula o laboratorio.
+- **Automatización real de ciclo de vida:** Ansible no solo despliega, sino que configura, actualiza, monitoriza y mantiene los sistemas, y puede integrarse con pipelines CI/CD, monitorización y backup. Vagrant automatiza principalmente la creación y destrucción de VMs, no su gestión avanzada.
+- **Reproducibilidad y estandarización:** La infraestructura definida en Proxmox y gestionada por Ansible es completamente replicable y versionable (IaC), lo que facilita la colaboración y la documentación en el entorno educativo.
+- **Preparación para el mundo real:** Aprender Proxmox y Ansible es más útil como base profesional, ya que son herramientas ampliamente usadas en empresas, centros de datos y plataformas de cloud privado, mientras que Vagrant es más habitual entre desarrolladores de software que necesitan entornos efímeros.
+
+---
+
+### ¿Cuándo elegir Vagrant?
+
+- Si el objetivo es crear rápidamente entornos de desarrollo para pruebas de software, sin necesidad de alta disponibilidad, redes avanzadas o gestión a nivel de infraestructura.
+- Si se busca simplicidad máxima y el entorno de laboratorio se puede limitar a una sola máquina.
+- Si los recursos hardware son muy limitados y solo se dispone de una máquina local para hacer pruebas.
+
+---
+
+**En resumen:**  
+Proxmox + Ansible es la solución más adecuada para un TFG de administración de sistemas porque permite cubrir todo el ciclo de vida de la infraestructura, automatizar tareas avanzadas y simular entornos reales y empresariales, mientras que Vagrant está más enfocado a laboratorios de desarrollo individuales y entornos sencillos.
+
 ## 6. Áreas del ciclo formativo
 
 - Implantación  
