@@ -563,7 +563,7 @@ Para ello, nos direigimos a la interfaz proxmox, seleccionamos el nodo, seleccio
 
 Una vez preparados todos los archivos y la imagen, tendríamos todo listo para ejecutar el playbook y conseguir el despliegue de la primera máquina. Para ello, ejecutamos el comando siguiente:
 ```bash
-ansible-playbook -i inventory.ini playbooks/snort.yml -u root --ask-pass
+ansible-playbook -i inventory.ini playbooks/snort.yml
 ```
 Con este comando, ejecutaremos el playbook que orquesta el despliegue como root. Se vería tal que así:
 
