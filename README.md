@@ -37,8 +37,18 @@ Este proyecto se centra en la automatización del despliegue y gestión de infra
 - **Centro educativo:** IES Albarregas  
 
 ---
+# 3. Introducción
 
-## 3. Justificación y objetivos
+Hoy en día, tanto en empresas como en centros de estudios, es muy común tener que crear y gestionar muchos ordenadores virtuales para hacer prácticas, pruebas o montar servicios. Hacer esto a mano puede ser muy lento, aburrido y propenso a errores, sobre todo cuando tenemos que repetirlo varias veces o queremos asegurar que todos los compañeros tienen el mismo entorno.
+
+Por eso, cada vez se usan más herramientas que permiten automatizar estos procesos y que el trabajo del administrador de sistemas sea más sencillo y eficiente. En este proyecto he elegido dos de las herramientas más populares y potentes: **Proxmox VE**, que sirve para crear y gestionar máquinas virtuales de forma centralizada, y **Ansible**, que permite automatizar tareas y configuraciones en muchos servidores a la vez utilizando archivos de texto muy fáciles de leer y modificar.
+
+El objetivo de este trabajo es enseñar cómo, combinando Proxmox y Ansible, se puede montar un entorno completo de máquinas virtuales de manera automática, rápida y sin errores, consiguiendo así un laboratorio o infraestructura que se pueda reutilizar y adaptar fácilmente para diferentes asignaturas o proyectos. Además, esta forma de trabajar se parece mucho a lo que piden actualmente en las empresas, por lo que lo aprendido aquí es muy útil para el futuro profesional.
+
+A lo largo de la documentación explico desde los conceptos básicos, los pasos que he seguido, los problemas que me he encontrado, hasta cómo se puede mejorar el proyecto en el futuro y un manual para que cualquier persona pueda repetirlo aunque no tenga mucha experiencia previa.
+
+---
+## 4. Justificación y objetivos
 
 ### Justificación del Proyecto:
 
@@ -56,7 +66,7 @@ Con este proyecto, se pretende abordar estos desafíos mediante el uso de Proxmo
 
 ---
 
-## 4. Contenidos y aspectos principales
+## 5. Contenidos y aspectos principales
 
 ### Funcionalidad que se Implementará:
 
@@ -93,7 +103,7 @@ Con este proyecto, se pretende abordar estos desafíos mediante el uso de Proxmo
 
 ---
 
-## 5. Medios que se utilizarán
+## 6. Medios que se utilizarán
 
 ### Arquitectura de Desarrollo:
 
@@ -151,7 +161,7 @@ Con este proyecto, se pretende abordar estos desafíos mediante el uso de Proxmo
 **En resumen:**  
 Proxmox + Ansible es la solución más adecuada para un TFG de administración de sistemas porque permite cubrir todo el ciclo de vida de la infraestructura, automatizar tareas avanzadas y simular entornos reales y empresariales, mientras que Vagrant está más enfocado a laboratorios de desarrollo individuales y entornos sencillos.
 
-## 6. Áreas del ciclo formativo
+## 7. Áreas del ciclo formativo
 
 - Implantación  
 - Administración de sistemas  
@@ -159,7 +169,7 @@ Proxmox + Ansible es la solución más adecuada para un TFG de administración d
 
 ---
 
-## 7. ¿Qué es Ansible?
+## 8. ¿Qué es Ansible?
 
 Ansible es una herramienta que permite automatizar la gestión de servidores sin necesidad de instalar programas adicionales en ellos. Usa archivos en formato YAML llamados playbooks para definir qué tareas deben ejecutarse en cada servidor.
 
@@ -182,7 +192,7 @@ Ansible está desarrollado en Python y usa este lenguaje para ejecutar sus tarea
 
 ---
 
-## 8. ¿Qué es Proxmox?
+## 9. ¿Qué es Proxmox?
 
 **Proxmox Virtual Environment (Proxmox VE)** es una plataforma de virtualización de código abierto basada en Debian que permite administrar máquinas virtuales y contenedores de manera sencilla. Usa KVM para la virtualización completa y LXC para contenedores ligeros.
 
@@ -204,13 +214,13 @@ Ansible está desarrollado en Python y usa este lenguaje para ejecutar sus tarea
 
 ---
 
-## 9. Esquema del despliegue
+## 10. Esquema del despliegue
 
 *![image](https://github.com/user-attachments/assets/a950c848-e72c-4f0e-a3fb-364b3f08e394)*
 
 ---
 
-## 10. Desarrollo
+## 11. Desarrollo
 
 ### 1. Instalación de máquina Ansible:
 
