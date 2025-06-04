@@ -1031,9 +1031,6 @@ Considero que este trabajo es muy útil para el ciclo formativo de ASIR porque a
 - **Playbook**: Archivo en formato YAML que define un conjunto de tareas automatizadas que Ansible debe ejecutar en uno o varios servidores.
 - **Proxmox VE**: Plataforma de virtualización de código abierto basada en Debian, usada para crear y gestionar máquinas virtuales y contenedores.
 - **Provisionar**: El proceso de preparar y configurar un sistema o servicio para su uso.
-- **RAM (Random Access Memory)**: Memoria principal de un ordenador, donde se almacenan datos y programas mientras están en uso.
-- **Red LAN (Local Area Network)**: Red local que conecta dispositivos en una zona limitada, como un aula o una oficina.
-- **Red WAN (Wide Area Network)**: Red que conecta diferentes redes LAN a grandes distancias.
 - **Repositorio**: Lugar centralizado donde se almacenan y gestionan archivos y versiones de un proyecto (por ejemplo, en GitHub).
 - **Rol (Role)**: En Ansible, un conjunto de tareas, archivos y variables agrupadas para ser reutilizadas fácilmente.
 - **Root**: Usuario administrador en sistemas Linux, con todos los permisos.
@@ -1045,5 +1042,4 @@ Considero que este trabajo es muy útil para el ciclo formativo de ASIR porque a
 - **Template (Plantilla)**: Máquina virtual o configuración base que se usa para crear rápidamente nuevas máquinas idénticas.
 - **Usuario sudo**: Usuario que tiene permisos para ejecutar tareas administrativas en Linux.
 - **VM (Virtual Machine)**: Máquina Virtual, es decir, un ordenador “virtual” que funciona dentro de otro físico o virtualizador.
-- **VLAN (Virtual LAN)**: Red lógica dentro de una red física que aísla grupos de dispositivos como si estuvieran en redes separadas.
 - **YAML**: Formato de texto fácil de leer y escribir, usado para definir la configuración de playbooks en Ansible y otros sistemas.
