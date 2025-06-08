@@ -18,7 +18,7 @@ ________________________________________
 
 ---
 
-## 1. Título y descripción general del proyecto
+# 1. Título y descripción general del proyecto
 ![image](https://github.com/user-attachments/assets/a5c7c700-ee6d-47cd-bbb0-68efda6e42f4)
 
 **"Automatiza tu infraestructura, simplifica tu gestión"**
@@ -30,14 +30,14 @@ Este proyecto se centra en la automatización del despliegue y gestión de infra
 
 ---
 
-## 2. Identificación del proyecto
+# 2. Identificación del proyecto
 
 - **Participantes:** Carlos Castillo González  
 - **Ciclo formativo:** ASIR  
 - **Centro educativo:** IES Albarregas  
 
 ---
-## 2. Planteamiento del problema a resolver
+# 2. Planteamiento del problema a resolver
 
 Cuando tenemos que montar laboratorios o entornos de prácticas en clase, normalmente hay que crear muchas máquinas virtuales, instalarles los sistemas operativos, configurar la red, poner usuarios y dejarlo todo listo para usar. Si esto lo hacemos a mano, cada vez que un profesor o un alumno necesita un entorno nuevo, hay que repetir todos los pasos uno a uno: descargar la ISO, instalar, poner la IP, instalar programas, etc.
 
@@ -50,7 +50,7 @@ Por eso, el **problema principal** es que hacer todo esto de forma manual es len
 La solución que planteo es automatizarlo todo, para que con unos pocos comandos se puedan crear y configurar todas las máquinas de manera rápida, igual para todos y sin errores, haciendo el trabajo mucho más fácil para profesores y alumnos.
 
 ---
-## 3. Justificación y objetivos
+# 3. Justificación y objetivos
 
 ### Justificación del Proyecto:
 
@@ -68,7 +68,7 @@ Con este proyecto, se pretende abordar estos desafíos mediante el uso de Proxmo
 
 ---
 
-## 4. Contenidos y aspectos principales
+# 4. Contenidos y aspectos principales
 
 ### Funcionalidad que se Implementará:
 
@@ -76,7 +76,6 @@ Con este proyecto, se pretende abordar estos desafíos mediante el uso de Proxmo
 - **Despliegue de Proxmox VE:** Instalación y configuración de Proxmox VE.  
 - **Automatización con Ansible:** Creación de playbooks de Ansible para automatizar el despliegue y configuración de máquinas virtuales en Proxmox.  
 - **Gestión de Máquinas Virtuales:** Configuración de almacenamiento y redes, creación de plantillas de VMs, y despliegue de varias VMs con diferentes configuraciones.  
-- **Monitorización y Mantenimiento:** Implementación de herramientas de monitorización para supervisar el estado de las VMs y el servidor Proxmox.
 
 ### Cómo se va a Implementar:
 
@@ -105,7 +104,7 @@ Con este proyecto, se pretende abordar estos desafíos mediante el uso de Proxmo
 
 ---
 
-## 5. Medios que se utilizarán
+# 5. Medios que se utilizarán
 
 ### Arquitectura de Desarrollo:
 
@@ -119,7 +118,7 @@ Con este proyecto, se pretende abordar estos desafíos mediante el uso de Proxmo
 
 ---
 
-## Comparativa: Proxmox + Ansible vs. Vagrant
+# Comparativa: Proxmox + Ansible vs. Vagrant
 
 ### ¿Qué es Vagrant?
 [Vagrant](https://www.vagrantup.com/) es una herramienta de automatización de entornos de desarrollo que permite crear y gestionar máquinas virtuales de forma sencilla, principalmente sobre hipervisores locales como VirtualBox, VMware, Hyper-V o incluso sobre proveedores cloud. Se utiliza mucho para laboratorios, testing y desarrollo de software, ya que facilita la creación de entornos reproducibles con simples archivos de configuración llamados `Vagrantfile`.
@@ -163,13 +162,14 @@ Con este proyecto, se pretende abordar estos desafíos mediante el uso de Proxmo
 **En resumen:**  
 Proxmox + Ansible es la solución más adecuada para un TFG de administración de sistemas porque permite cubrir todo el ciclo de vida de la infraestructura, automatizar tareas avanzadas y simular entornos reales y empresariales, mientras que Vagrant está más enfocado a laboratorios de desarrollo individuales y entornos sencillos.
 
-## 6. Áreas del ciclo formativo
+# 6. Áreas del ciclo formativo
 
 - Implantación  
 - Administración de sistemas  
 - Redes  
 
 ---
+# Contextualización de herramientas
 
 ## 7. ¿Qué es Ansible?
 
@@ -216,13 +216,13 @@ Ansible está desarrollado en Python y usa este lenguaje para ejecutar sus tarea
 
 ---
 
-## 9. Esquema del despliegue
+# 9. Esquema del despliegue
 
 *![image](https://github.com/user-attachments/assets/a950c848-e72c-4f0e-a3fb-364b3f08e394)*
 
 ---
 
-## 10. Desarrollo
+# 10. Desarrollo
 
 ### 1. Instalación de máquina Ansible:
 
@@ -315,7 +315,9 @@ http://192.168.100.3:8006
 
 Una vez logueados, ya tendríamos disponible nuestra interfaz de Proxmox, la cual trataremos de utilizar lo menos posible ya que con Ansible, podremos gestionar la mayoría de las operaciones a realizar para el despliegue, aunque sí tendremos que usarla para algunas configuraciones.
 
-### Varios tipos de despliegue
+---
+
+# Varios tipos de despliegue
 
 ## Despliegue desde imagen cloud-init
 
@@ -856,7 +858,53 @@ Como podemos observar, aquí tenemos la máquina que usaremos como plantilla y s
 
 ![Captura de pantalla 2025-06-03 140457](https://github.com/user-attachments/assets/6e3ed693-17e7-4567-85c7-ecaa28e6a9da)
 
-## Errores encontrados y soluciones aplicadas
+# Aplicación a entorno real
+
+El presente proyecto ha sido diseñado y desplegado como una simulación realista de un entorno empresarial segmentado en distintas zonas de red, aplicando principios de seguridad perimetral y defensa en profundidad. Para ello, se ha empleado una infraestructura virtual basada en Proxmox VE como hipervisor y Ansible como herramienta de automatización.
+
+## Infraestructura Virtual
+La topología del entorno está estructurada en tres segmentos principales de red:
+
+WAN (vmbr0): representa la conexión hacia el exterior.
+
+LAN (vmbr1): red interna donde residen los sistemas internos de la organización.
+
+DMZ (vmbr2): red perimetral expuesta donde se ubican servicios públicos como un servidor web.
+
+Cada uno de estos segmentos ha sido implementado mediante bridges (vmbrX) en Proxmox, y cada máquina virtual ha sido conectada de forma adecuada a uno o más de estos segmentos según su rol.
+
+### Funcionalidad de las Máquinas
+ - pfSense: funciona como cortafuegos y gateway entre las distintas redes. Se conecta a las tres interfaces (WAN, LAN, DMZ) y gestiona todo el enrutamiento y las reglas de filtrado. Además, ofrece servicios de DHCP para las subredes internas.
+
+ - Snort: IDS/IPS conectado a la red LAN, monitoriza el tráfico interno y permite detectar posibles intrusiones dentro de la organización.
+
+ - Suricata: sistema de detección conectado a dos interfaces: una en WAN y otra en una red "WAN monitor" paralela, para realizar inspección del tráfico entrante y detectar anomalías desde el exterior sin interrumpir el tráfico directo hacia pfSense.
+
+ - Servidor Web (DMZ): alojado en la red perimetral DMZ, expone servicios que pueden ser accedidos desde el exterior. Está aislado del resto de la infraestructura, minimizando riesgos en caso de compromiso.
+
+ - Kali Linux: máquina atacante conectada a LAN y DMZ, utilizada en entornos de prueba para simular ataques internos y externos controlados.
+
+ - Pila ELK (Elasticsearch, Logstash, Kibana): desplegada en LAN. Centraliza y visualiza logs provenientes de Snort, Suricata y pfSense para facilitar el análisis forense y la respuesta ante incidentes.
+
+### Automatización del Despliegue
+Todo el entorno ha sido desplegado de forma automatizada mediante Ansible, aprovechando su capacidad para interactuar con Proxmox vía API REST. El proceso incluye:
+
+  - Conversión y despliegue de imágenes OVA/QCOW2.
+
+  - Asignación de interfaces de red según topología.
+
+  - Aplicación de configuraciones específicas (por ejemplo, modificación de GRUB, plantillas Cloud-Init y archivos netplan).
+
+  - Arranque ordenado y configuración de servicios.
+
+Gracias a esta automatización, se ha logrado replicar el entorno de forma coherente, reproducible y eficiente, facilitando futuras pruebas, análisis de seguridad y desarrollo de políticas de red.
+
+### Aplicación Real
+Este tipo de entorno es directamente aplicable a organizaciones reales que requieran segmentación de red, análisis de tráfico y simulación de ataques como parte de su estrategia de ciberseguridad. Permite emular situaciones del mundo real, validar herramientas defensivas y formar personal técnico en un entorno controlado y realista.
+
+---
+
+# Errores encontrados y soluciones aplicadas
 
 Durante el desarrollo y despliegue automatizado con Ansible y Proxmox, me he encontrado con diversos errores y obstáculos técnicos. A continuación detallo algunos de los problemas reales que han surgido, cómo los he solucionado y recojo también los errores más habituales que suelen aparecer en este tipo de despliegues según la experiencia y la documentación de la comunidad.
 
