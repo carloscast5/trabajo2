@@ -1,7 +1,6 @@
-# PROPUESTA PROYECTO ASIR  Carlos Castillo Gonzalez
+# PROYECTO ASIR  Carlos Castillo Gonzalez
 **Módulo** “Proyecto de Administración de Sistemas Informáticos en Red”  
-**Alumno:Carlos Castillo Gonzalez**  
-**Fecha:**  
+**Alumno:Carlos Castillo Gonzalez**    
 ________________________________________
 
 ## Índice
@@ -112,9 +111,7 @@ Con este proyecto, se pretende abordar estos desafíos mediante el uso de Proxmo
 - **Lenguaje de Servidor:** Bash para scripts de configuración y Ansible para la automatización.  
 - **Lenguaje de Cliente:** No aplica directamente, pero se podrían utilizar herramientas de administración web para Proxmox.  
 - **Framework:** Ansible para la automatización.  
-- **Sistema de Gestión de Bases de Datos (SGBD):** No se requiere un SGBD específico para la configuración inicial, aunque se puede utilizar MySQL o PostgreSQL para aplicaciones específicas dentro de las VMs.  
 - **Herramientas de Monitorización:** Se podrían utilizar herramientas como Prometheus y Grafana para supervisar el estado de las VMs y el servidor Proxmox.  
-- **Control de Versiones:** Git para el versionado de los playbooks de Ansible y scripts de configuración.
 
 ---
 
@@ -267,9 +264,7 @@ Ahora, instalaremos las dependencias necesarias para que Ansible interactúe con
 ansible-galaxy collection install community.general
 ```
 
-Instalamos también `proxmoxer` y `requests` haciendo uso de pip, pero primero, instalamos `venv`, el cual nos proporcionará un entorno virtual para Python:
-
-Lo instalaremos mediante paquetes de Ubuntu:
+Instalamos también `proxmoxer` y `requests`, lo instalaremos mediante paquetes de Ubuntu, auqneu también lo podemos descargar con pip:
 
 ```bash
 sudo apt install -y python3-requests python3-proxmoxer
@@ -299,8 +294,9 @@ En este caso, configuré tres interfaces de red, conectadas a tres bridges de Pr
 | Interfaz | Bridge | Función | Subred          |
 |----------|--------|---------|-----------------|
 | net0     | vmbr0  | WAN     | 172.17.10.0/24  |
-| net1     | vmbr1  | LAN     | 192.168.10.0/24 |
-| net2     | vmbr2  | DMZ     | 192.168.20.0/24 |
+| net1     | vmbr1  | LAN     |   pfsense       |
+| net2     | vmbr2  | DMZ     |   pfsense       |
+| net3     | vmbr3  | Mirror  |    Sin IP       |
 
 ### 4. Instalación Ubuntu Cliente:
 
@@ -331,7 +327,7 @@ Una vez creada la carpeta, organizaremos los archivos necesarios en 3 partes:
 
 - **Inventario**
 - **Playbooks**
-- **Cloud-init**
+- **Cloud-init** (Cuando instalamos una imagen, desde aquí configuraremos usuario y red)
 
 *![image](https://github.com/user-attachments/assets/ed84593a-228f-484d-be81-93404573ed17)*
 
@@ -528,33 +524,6 @@ runcmd:
 
 - **snort-network-config.yml.j2**
 ```bash
-#cloud-config
-hostname: {{ vm_name }}
-users:
-  - name: {{ cloud_init_user }}
-    sudo: ALL=(ALL) NOPASSWD:ALL
-    groups: sudo
-    home: /home/{{ cloud_init_user }}
-    shell: /bin/bash
-    lock_passwd: false
-    passwd: "{{ cloud_init_password | password_hash('sha512') }}"
-ssh_pwauth: true
-disable_root: false
-chpasswd:
-  expire: false
-
-package_update: true
-packages:
-  - snort
-
-bootcmd:
-  - echo 'ttyS0' > /etc/securetty
-
-runcmd:
-  - netplan apply
-  - systemctl enable snort
-
-carlos@ansible:~/proyecto2/cloud_init$ cat snort-network-config.yml.j2
 version: 2
 ethernets:
   {{ vm_network_interface }}:
@@ -608,7 +577,7 @@ Una vez terminado el despliegue, nos dirigiremos a la interfaz Proxmox para comp
   
   *![image](https://github.com/user-attachments/assets/0c7cd2ed-6745-4c6f-a768-c8cad462f80c)*
 
-## 10. Despliegue de máquina OVA:
+# 10. Despliegue de máquina OVA:
 
 Una opción muy buena de proxmox y que nos ahorraría aún más tiempo, sería instalr una OVA con todo lo necesario para nuestro entorno de trabajo ya instaldo. Para ello, crearemos un playbook con los requerimientos necesarios:
   
@@ -636,7 +605,7 @@ Este playbook permite automatizar todo el ciclo de vida de una VM a partir de un
     vm_cores: 2
     storage: "local-lvm"
     bridge: "vmbr0"
-    ova_path: "/var/lib/vz/template/iso/Snort_2.ova"  # MISMA OVA
+    ova_path: "/var/lib/vz/template/iso/Snort_2.ova"  
     extracted_dir: "/var/lib/vz/template/iso/snort2-vm2"  # Carpeta distinta
     qcow2_path: "/var/lib/vz/template/iso/snort2-vm2/ubuntu-snort-2.qcow2"  # Disco diferente
 
@@ -712,9 +681,9 @@ Este playbook permite automatizar todo el ciclo de vida de una VM a partir de un
 Una vez creado el playbook, nos quedaría desplegarlo y comprobar que se ejecuta correctamente. Una vez se ejecute, comprobamos que se ha desplegado sin problemas:
 ![image](https://github.com/user-attachments/assets/d5dede77-811c-4d8f-912d-300c1f949d23)
 
-**Cabe recalcar que todas las configuraciones deben venir previamente configuradas en la OVA, como por ejemplo, las redes o las reglas del Snort.
+**Cabe recalcar que todas las configuraciones deben venir previamente configuradas en la OVA, como por ejemplo, las redes o las reglas del Snort, para así no tener que tocar nada dentro de ellas.
 
-## 10. Despliegue de máquina OVA desde un QCOW2 directamente:
+# 10. Despliegue de máquina OVA desde un QCOW2 directamente:
 
 Hay veces que nos encontraremos con el disco QCOW2 directamente para poder desplegarlo, sin tener que extraer carpetas ni convertir de un formato a otro.
 En esta sección explico cómo realicé el despliegue de una máquina virtual directamente desde un archivo en formato QCOW2 utilizando Ansible en un entorno Proxmox. Este método me resultó especialmente útil cuando trabajé con imágenes preconfiguradas como Kali Linux o Snort, que ya tenía en formato .qcow2, evitando así pasos adicionales de conversión desde OVA o VMDK.
@@ -799,7 +768,7 @@ scp kali.qcow2 root@172.17.10.53:/var/lib/vz/template/iso/
 
 ![image](https://github.com/user-attachments/assets/743d95c1-e33b-4e70-8c77-0e98d0626f8d)
 
-## Clonado de una Máquina Virtual desde Plantilla en Proxmox
+# Clonado de una Máquina Virtual desde Plantilla en Proxmox
 
 Una vez creada la plantilla base (por ejemplo, desde una OVA previamente importada y personalizada), es posible clonar dicha plantilla para desplegar nuevas máquinas virtuales de forma rápida y consistente.
 
@@ -912,48 +881,40 @@ Durante el desarrollo y despliegue automatizado con Ansible y Proxmox, me he enc
 
 ### Errores reales durante mi proyecto y sus soluciones
 
-1. **Error de autenticación SSH entre Ansible y Proxmox**
-   - **Síntoma:** Al lanzar playbooks contra el nodo Proxmox, aparecía el error `Permission denied (publickey,password)`.
-   - **Solución:**  
-     - Verifiqué que el usuario y la contraseña en el inventario eran correctos.
-     - Probé la conexión SSH manualmente (`ssh root@<IP-DEL-PROXMOX>`).
-     - Tuve que copiar la clave pública SSH del servidor Ansible al nodo Proxmox con `ssh-copy-id`.
-     - En algunos casos, fue necesario habilitar el acceso por contraseña en el archivo `/etc/ssh/sshd_config` y reiniciar el servicio SSH.
 
-2. **Fallo en módulos de Ansible por dependencias de Python**
+1. **Fallo en módulos de Ansible por dependencias de Python**
    - **Síntoma:** Errores tipo `ModuleNotFoundError: No module named 'proxmoxer'` o problemas con la colección community.general.
    - **Solución:**  
      - Instalé los módulos necesarios con `pip install proxmoxer requests`.
      - Verifiqué que el entorno virtual Python estuviera correctamente activado.
      - Instalé la colección de Ansible necesaria con `ansible-galaxy collection install community.general`.
 
-3. **Error al importar imágenes QCOW2/OVA**
+2. **Error al importar imágenes QCOW2/OVA**
    - **Síntoma:** El comando `qm importdisk` fallaba porque la ruta del archivo era incorrecta o porque el almacenamiento seleccionado no era válido.
    - **Solución:**  
      - Revisé que la ruta de la imagen estuviera correctamente escrita y el archivo efectivamente subido al nodo.
      - Comprobé el nombre del almacenamiento en Proxmox (`local-lvm`, `local`, etc.).
      - Cambié permisos de archivos si era necesario (`chmod`).
 
-4. **Problemas con Cloud-Init**
+3. **Problemas con Cloud-Init**
    - **Síntoma:** La máquina virtual desplegada no aplicaba la configuración de red o usuario definida en los archivos de Cloud-Init.
    - **Solución:**  
      - Verifiqué la sintaxis de los archivos YAML (`user-data` y `network-config`).
      - Confirmé que los archivos se copiaban correctamente en la ruta de snippets de Proxmox.
      - Aseguré que la VM tuviera el disco de Cloud-Init correctamente adjunto y que el arranque fuera desde dicho disco.
 
-5. **Errores de permisos en Proxmox**
+4. **Errores de permisos en Proxmox**
    - **Síntoma:** Mensajes de `permission denied` o errores al intentar crear VMs desde Ansible.
    - **Solución:**  
      - Utilicé el usuario `root@pam` para las pruebas.
-     - Más adelante, creé un usuario con permisos estrictamente necesarios y le asigné los roles apropiados en Proxmox.
 
-6. **Fallo en ejecución de playbooks por rutas relativas**
+5. **Fallo en ejecución de playbooks por rutas relativas**
    - **Síntoma:** Ansible no encontraba archivos de plantillas o imágenes (`template not found`).
    - **Solución:**  
      - Usé rutas absolutas en los playbooks y aseguré que la estructura de carpetas fuera consistente.
      - Añadí tareas para crear directorios si no existían (`file: state=directory`).
 
-7. **Error con la opción KVM habilitada o deshabilitada**
+6. **Error con la opción KVM habilitada o deshabilitada**
    - **Síntoma:** Al desplegar algunas máquinas virtuales, especialmente imágenes cloud-init o appliances importados, la VM no arrancaba correctamente o mostraba errores relacionados con la compatibilidad de hardware virtual (por ejemplo, pantallas negras, errores de arranque, o mensajes como "KVM virtualization not supported").
    - **Causa:**  
      - No todas las imágenes o sistemas operativos soportan la virtualización KVM (Kernel-based Virtual Machine) de la misma manera. Por ejemplo, algunas imágenes cloud-init o appliances pueden necesitar que KVM esté desactivado para funcionar correctamente, mientras que otras requieren que esté habilitado para aprovechar la aceleración por hardware.
@@ -967,7 +928,6 @@ Durante el desarrollo y despliegue automatizado con Ansible y Proxmox, me he enc
        ```bash
        qm set <vm_id> --kvm 1
        ```
-     - En Ansible, lo gestioné con tareas condicionales según el tipo de imagen o sistema operativo.
      - Comprobé en la documentación oficial y foros si la imagen tenía requisitos especiales sobre KVM.
 
 ---
@@ -1002,7 +962,7 @@ Durante el desarrollo y despliegue automatizado con Ansible y Proxmox, me he enc
    - Si se usa un nombre incorrecto, los comandos de creación de disco o importación fallan.
    - **Prevención:** Comprobar los nombres exactos en la interfaz de Proxmox antes de lanzar los playbooks.
 
-8. **Errores con la aceleración KVM (añadido)**
+8. **Errores con la aceleración KVM **
    - Algunos sistemas/appliances requieren desactivar KVM, otros requieren activarlo.
    - **Prevención:** Revisar los requisitos de cada imagen, y adaptar el parámetro `--kvm` según corresponda. Probar ambos modos si aparecen errores de arranque.
 
